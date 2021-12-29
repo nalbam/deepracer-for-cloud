@@ -6,7 +6,7 @@ STANDARD_TIME = 50  # seconds (time that is easily done by model)
 FASTEST_TIME = 20  # seconds (best time of 1st place on the track)
 
 MIN_SPEED = 1.0
-MAX_SPEED = 4.9
+MAX_SPEED = 4.0
 
 class Reward:
     def __init__(self, verbose=False):
