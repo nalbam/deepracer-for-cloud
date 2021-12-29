@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-##  This is sample code that will generally show you how to launch a spot instance on aws and leverage the 
+##  This is sample code that will generally show you how to launch a spot instance on aws and leverage the
 ##  automation built into deepracer-for-cloud to automatically start training
 ##  Changes required to work:
 ##     Input location where your training will take place -- S3_LOCATION
@@ -49,7 +49,7 @@ LAST_TRAINING=$(echo $LAST_TRAINING | sed 's:/*$::')
 CONFIG_FILE="./run.env"
 OLD_SYSTEMENV="./system.env"
 
-## incorporate logic from increment.sh, slightly modified to use last training 
+## incorporate logic from increment.sh, slightly modified to use last training
 OPT_DELIM='-'
 ## Read in data
 CURRENT_RUN_MODEL=$(aws s3 ls $S3_LOCATION/rl-deepracer | sort -t - -k 3 -g | tail -n 1 | awk '{print $2}')
@@ -79,7 +79,7 @@ else
     then
       NEW_RUN_MODEL=$(echo $CURRENT_RUN_MODEL | sed "s/${CURRENT_RUN_MODEL_NUM}\$/${NEW_RUN_MODEL_NUM}/")
     else
-      NEW_RUN_MODEL=$(echo $CURRENT_RUN_MODEL | sed "s/${CURRENT_RUN_MODEL_NUM}\$/${NEW_RUN_MODEL_NUM}/")     
+      NEW_RUN_MODEL=$(echo $CURRENT_RUN_MODEL | sed "s/${CURRENT_RUN_MODEL_NUM}\$/${NEW_RUN_MODEL_NUM}/")
       NEW_RUN_MODEL="$PREFIX/$NEW_RUN_MODEL"
       CURRENT_RUN_MODEL="$PREFIX/$CURRENT_RUN_MODEL"
     fi
@@ -106,7 +106,7 @@ sed -i.bak -re "s/(DR_UPLOAD_S3_BUCKET=).*$/\1$DR_UPLOAD_S3_BUCKET/g; s/(DR_SAGE
 
 ## upload the new run.env and system.env files into your S3 bucket (same s3 location identified earlier)
 ## files are loaded into the node-config folder/prefix.  You can also upload other files to node config, and they
-## will sync to the EC2 instance as part of the autorun script later.  If you add other files, make sure they are 
+## will sync to the EC2 instance as part of the autorun script later.  If you add other files, make sure they are
 ## in node-config in the same directory structure as DRfc;   example:   s3location/node-config/scripts/training/.start.sh
 RUNENV_LOCATION=$S3_LOCATION/node-config/run.env
 SYSENV_LOCATION=$S3_LOCATION/node-config/system.env
