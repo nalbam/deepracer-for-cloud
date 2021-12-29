@@ -7,7 +7,7 @@ class Reward:
 
     '''
     Debugging reward function to be used to track performance of local training.
-    Will print out the Real-Time-Factor (RTF), as well as how many 
+    Will print out the Real-Time-Factor (RTF), as well as how many
     steps-per-second (sim-time) that the system is able to deliver.
     '''
 
@@ -26,12 +26,12 @@ class Reward:
 
         wall_time_incr = numpy.max(self.time[:,0]) - numpy.min(self.time[:,0])
         sim_time_incr = numpy.max(self.time[:,1]) - numpy.min(self.time[:,1])
-        
+
         rtf = sim_time_incr / wall_time_incr
         fps = (self.time.shape[0] - 1) / sim_time_incr
 
         return rtf, fps
-    
+
     def record_time(self, steps):
 
         index = int(steps) % self.time.shape[0]

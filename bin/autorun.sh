@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 ## this is the default autorun script
-## file should run automatically after init.sh completes.  
+## file should run automatically after init.sh completes.
 ## this script downloads your configured run.env, system.env and any custom container requests
 
 INSTALL_DIR_TEMP="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." >/dev/null 2>&1 && pwd )"
@@ -28,6 +28,5 @@ dr-reload
 date | tee $INSTALL_DIR_TEMP/DONE-AUTORUN
 
 ## start training
-cd $INSTALL_DIR_TEMP/scripts/training 
+cd $INSTALL_DIR_TEMP/scripts/training
 ./start.sh
-

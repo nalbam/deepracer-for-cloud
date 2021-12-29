@@ -5,5 +5,5 @@ name: Deepracer-for-Cloud
 plugins:
   - jekyll-relative-links
 relative_links:
-  enabled:     true
+  enabled: true
   collections: false

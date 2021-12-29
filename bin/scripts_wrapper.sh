@@ -58,16 +58,13 @@ function dr-stop-evaluation {
   ROBOMAKER_COMMAND="" bash -c "cd $DR_DIR/scripts/evaluation && ./stop.sh"
 }
 
-
 function dr-start-tournament {
   echo "Tournaments are no longer supported. Use Head-to-Model evaluation instead."
 }
 
-
 function dr-start-loganalysis {
   ROBOMAKER_COMMAND="" bash -c "cd $DR_DIR/scripts/log-analysis && ./start.sh"
 }
-
 
 function dr-stop-loganalysis {
   eval LOG_ANALYSIS_ID=$(docker ps | awk ' /loganalysis/ { print $1 }')
@@ -76,11 +73,9 @@ function dr-stop-loganalysis {
   else
     echo "Log-analysis is not running."
   fi
-
 }
 
 function dr-logs-sagemaker {
-
   local OPTIND
   OPT_TIME="--since 5m"
 
@@ -89,7 +84,7 @@ function dr-logs-sagemaker {
   w) OPT_WAIT=$OPTARG
   ;;
   a) OPT_TIME=""
-  ;;  
+  ;;
   \?) echo "Invalid option -$OPTARG" >&2
   ;;
   esac
@@ -120,14 +115,14 @@ function dr-logs-sagemaker {
 
   if [[ "${DR_HOST_X,,}" == "true" && -n "$DISPLAY" ]];
   then
-    if [ -x "$(command -v gnome-terminal)" ]; 
+    if [ -x "$(command -v gnome-terminal)" ];
     then
       gnome-terminal --tab --title "DR-${DR_RUN_ID}: Sagemaker - ${SAGEMAKER_CONTAINER}" -- /usr/bin/bash -c "docker logs $OPT_TIME -f ${SAGEMAKER_CONTAINER}" 2> /dev/null
       echo "Sagemaker container $SAGEMAKER_CONTAINER logs opened in separate gnome-terminal. "
-    elif [ -x "$(command -v x-terminal-emulator)" ]; 
+    elif [ -x "$(command -v x-terminal-emulator)" ];
     then
       x-terminal-emulator -e /bin/sh -c "docker logs $OPT_TIME -f ${SAGEMAKER_CONTAINER}" 2> /dev/null
-      echo "Sagemaker container $SAGEMAKER_CONTAINER logs opened in separate terminal. "      
+      echo "Sagemaker container $SAGEMAKER_CONTAINER logs opened in separate terminal. "
     else
       echo 'Could not find a defined x-terminal-emulator. Displaying inline.'
       docker logs $OPT_TIME -f $SAGEMAKER_CONTAINER
@@ -135,34 +130,30 @@ function dr-logs-sagemaker {
   else
       docker logs $OPT_TIME -f $SAGEMAKER_CONTAINER
   fi
-
 }
 
 function dr-find-sagemaker {
+  STACK_NAME="deepracer-$DR_RUN_ID"
+  RUN_NAME=${DR_LOCAL_S3_MODEL_PREFIX}
 
-    STACK_NAME="deepracer-$DR_RUN_ID"
-    RUN_NAME=${DR_LOCAL_S3_MODEL_PREFIX}
+  SAGEMAKER_CONTAINERS=$(docker ps | awk ' /sagemaker/ { print $1 } '| xargs )
 
-    SAGEMAKER_CONTAINERS=$(docker ps | awk ' /sagemaker/ { print $1 } '| xargs )
-
-    if [[ -n $SAGEMAKER_CONTAINERS ]];
-    then
-        for CONTAINER in $SAGEMAKER_CONTAINERS; do
-            CONTAINER_NAME=$(docker ps --format '{{.Names}}' --filter id=$CONTAINER)
-            CONTAINER_PREFIX=$(echo $CONTAINER_NAME | perl -n -e'/(.*)_(algo(.*))_./; print $1')
-            COMPOSE_SERVICE_NAME=$(echo $CONTAINER_NAME | perl -n -e'/(.*)_(algo(.*))_./; print $2')
-            COMPOSE_FILE=$(sudo find /tmp/sagemaker -name docker-compose.yaml -exec grep -l "$RUN_NAME" {} + | grep $CONTAINER_PREFIX)
-            if [[ -n $COMPOSE_FILE ]]; then
-                echo $CONTAINER
-                return
-            fi
-        done
-    fi
-
+  if [[ -n $SAGEMAKER_CONTAINERS ]];
+  then
+    for CONTAINER in $SAGEMAKER_CONTAINERS; do
+      CONTAINER_NAME=$(docker ps --format '{{.Names}}' --filter id=$CONTAINER)
+      CONTAINER_PREFIX=$(echo $CONTAINER_NAME | perl -n -e'/(.*)_(algo(.*))_./; print $1')
+      COMPOSE_SERVICE_NAME=$(echo $CONTAINER_NAME | perl -n -e'/(.*)_(algo(.*))_./; print $2')
+      COMPOSE_FILE=$(sudo find /tmp/sagemaker -name docker-compose.yaml -exec grep -l "$RUN_NAME" {} + | grep $CONTAINER_PREFIX)
+      if [[ -n $COMPOSE_FILE ]]; then
+        echo $CONTAINER
+        return
+      fi
+    done
+  fi
 }
 
 function dr-logs-robomaker {
-
   OPT_REPLICA=1
   OPT_EVAL=""
   local OPTIND
@@ -175,7 +166,7 @@ function dr-logs-robomaker {
   n) OPT_REPLICA=$OPTARG
   ;;
   e) OPT_EVAL="-e"
-  ;;  
+  ;;
   a) OPT_TIME=""
   ;;
   \?) echo "Invalid option -$OPTARG" >&2
@@ -208,28 +199,25 @@ function dr-logs-robomaker {
 
   if [[ "${DR_HOST_X,,}" == "true" && -n "$DISPLAY" ]];
   then
-    if [ -x "$(command -v gnome-terminal)" ]; 
+    if [ -x "$(command -v gnome-terminal)" ];
     then
       gnome-terminal --tab --title "DR-${DR_RUN_ID}: Robomaker #${OPT_REPLICA} - ${ROBOMAKER_CONTAINER}" -- /usr/bin/bash -c "docker logs $OPT_TIME -f ${ROBOMAKER_CONTAINER}" 2> /dev/null
       echo "Robomaker #${OPT_REPLICA} ($ROBOMAKER_CONTAINER) logs opened in separate gnome-terminal. "
-    elif [ -x "$(command -v x-terminal-emulator)" ]; 
+    elif [ -x "$(command -v x-terminal-emulator)" ];
     then
       x-terminal-emulator -e /bin/sh -c "docker logs $OPT_TIME -f ${ROBOMAKER_CONTAINER}" 2> /dev/null
       echo "Robomaker #${OPT_REPLICA} ($ROBOMAKER_CONTAINER) logs opened in separate terminal. "
     else
       echo 'Could not find a defined x-terminal-emulator. Displaying inline.'
-      docker logs $OPT_TIME -f $ROBOMAKER_CONTAINER 
+      docker logs $OPT_TIME -f $ROBOMAKER_CONTAINER
     fi
   else
       docker logs $OPT_TIME -f $ROBOMAKER_CONTAINER
   fi
-
 }
 
 function dr-find-robomaker {
-
   local OPTIND
-
   OPT_PREFIX="deepracer"
 
   while getopts ":n:e" opt; do
@@ -237,7 +225,7 @@ function dr-find-robomaker {
   n) OPT_REPLICA=$OPTARG
   ;;
   e) OPT_PREFIX="-eval"
-  ;;  
+  ;;
   \?) echo "Invalid option -$OPTARG" >&2
   ;;
   esac
@@ -250,7 +238,6 @@ function dr-find-robomaker {
 }
 
 function dr-get-robomaker-stats {
-
   local OPTIND
   OPT_REPLICA=1
 
@@ -279,7 +266,6 @@ function dr-logs-loganalysis {
   else
     echo "Log-analysis is not running."
   fi
-
 }
 
 function dr-url-loganalysis {

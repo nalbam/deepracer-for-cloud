@@ -28,7 +28,7 @@ DRfC is installed only on the manager. (The first installed host.) Swarm workers
 
 ### Ports
 
-Docker Swarm will automatically put a load-balancer in front of all replicas in a service. This means that the ROS Web View, which provides a video stream of the DeepRacer during training, will be load balanced - sharing one port (`8080`). If you have multiple workers (even across multiple hosts) then press F5 to cycle through them. 
+Docker Swarm will automatically put a load-balancer in front of all replicas in a service. This means that the ROS Web View, which provides a video stream of the DeepRacer during training, will be load balanced - sharing one port (`8080`). If you have multiple workers (even across multiple hosts) then press F5 to cycle through them.
 
 ## Compose Mode
 

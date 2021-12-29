@@ -6,13 +6,13 @@ services:
       restart_policy:
         condition: none
       placement:
-        constraints: [node.labels.Sagemaker == true ]
+        constraints: [ node.labels.Sagemaker == true ]
   robomaker:
     deploy:
       restart_policy:
         condition: none
       replicas: ${DR_WORKERS}
       placement:
-        constraints: [node.labels.Robomaker == true ]
+        constraints: [ node.labels.Robomaker == true ]
     environment:
-        - DOCKER_REPLICA_SLOT={{.Task.Slot}}
+      - DOCKER_REPLICA_SLOT={{.Task.Slot}}

@@ -3,8 +3,8 @@
 trap ctrl_c INT
 
 function ctrl_c() {
-        echo "Requested to stop."
-        exit 1
+    echo "Requested to stop."
+    exit 1
 }
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
@@ -18,7 +18,7 @@ case $opt in
 a) OPT_ARCH="$OPTARG"
 ;;
 m) OPT_MOUNT="$OPTARG"
-;; 
+;;
 c) OPT_CLOUD="$OPTARG"
 ;;
 \?) echo "Invalid option -$OPTARG" >&2
@@ -52,7 +52,7 @@ fi
 # Check GPU
 if [[ "${OPT_ARCH}" == "gpu" ]]
 then
-    docker build -t local/gputest - < $INSTALL_DIR/utils/Dockerfile.gpu-detect 
+    docker build -t local/gputest - < $INSTALL_DIR/utils/Dockerfile.gpu-detect
     GPUS=$(docker run --rm --gpus all local/gputest 2> /dev/null | awk  '/Device: ./' | wc -l )
     if [ $? -ne 0 ] || [ $GPUS -eq 0 ]
     then
@@ -64,19 +64,19 @@ fi
 cd $INSTALL_DIR
 
 # create directory structure for docker volumes
-mkdir -p $INSTALL_DIR/data $INSTALL_DIR/data/minio $INSTALL_DIR/data/minio/bucket 
+mkdir -p $INSTALL_DIR/data $INSTALL_DIR/data/minio $INSTALL_DIR/data/minio/bucket
 mkdir -p $INSTALL_DIR/data/logs $INSTALL_DIR/data/analysis $INSTALL_DIR/tmp
 sudo mkdir -p /tmp/sagemaker
 sudo chmod -R g+w /tmp/sagemaker
 
-# create symlink to current user's home .aws directory 
+# create symlink to current user's home .aws directory
 # NOTE: AWS cli must be installed for this to work
 # https://docs.aws.amazon.com/cli/latest/userguide/install-linux-al2017.html
 mkdir -p $(eval echo "~${USER}")/.aws $INSTALL_DIR/docker/volumes/
 ln -sf $(eval echo "~${USER}")/.aws  $INSTALL_DIR/docker/volumes/
 
 # copy rewardfunctions
-mkdir -p $INSTALL_DIR/custom_files 
+mkdir -p $INSTALL_DIR/custom_files
 cp $INSTALL_DIR/defaults/hyperparameters.json $INSTALL_DIR/custom_files/
 cp $INSTALL_DIR/defaults/model_metadata.json $INSTALL_DIR/custom_files/
 cp $INSTALL_DIR/defaults/reward_function.py $INSTALL_DIR/custom_files/
@@ -111,11 +111,11 @@ sed -i "s/<REGION_REPLACE>/$AWS_REGION/g" $INSTALL_DIR/system.env
 
 
 if [[ "${OPT_ARCH}" == "gpu" ]]; then
-    SAGEMAKER_TAG="gpu"   
+    SAGEMAKER_TAG="gpu"
 elif [[ -n "${CPU_INTEL}" ]]; then
-    SAGEMAKER_TAG="cpu-avx-mkl" 
+    SAGEMAKER_TAG="cpu-avx-mkl"
 else
-    SAGEMAKER_TAG="cpu" 
+    SAGEMAKER_TAG="cpu"
 fi
 
 #set proxys if required
@@ -135,7 +135,7 @@ sed -i "s/<COACH_TAG>/$COACH_VERSION/g" $INSTALL_DIR/system.env
 ROBOMAKER_VERSION=$(jq -r '.containers.robomaker  | select (.!=null)' $INSTALL_DIR/defaults/dependencies.json)
 if [ -n $ROBOMAKER_VERSION ]; then
     ROBOMAKER_VERSION=$ROBOMAKER_VERSION-$CPU_LEVEL
-else   
+else
     ROBOMAKER_VERSION=$CPU_LEVEL
 fi
 sed -i "s/<ROBO_TAG>/$ROBOMAKER_VERSION/g" $INSTALL_DIR/system.env
@@ -143,7 +143,7 @@ sed -i "s/<ROBO_TAG>/$ROBOMAKER_VERSION/g" $INSTALL_DIR/system.env
 SAGEMAKER_VERSION=$(jq -r '.containers.sagemaker  | select (.!=null)' $INSTALL_DIR/defaults/dependencies.json)
 if [ -n $SAGEMAKER_VERSION ]; then
     SAGEMAKER_VERSION=$SAGEMAKER_VERSION-$SAGEMAKER_TAG
-else   
+else
     SAGEMAKER_VERSION=$SAGEMAKER_TAG
 fi
 sed -i "s/<SAGE_TAG>/$SAGEMAKER_VERSION/g" $INSTALL_DIR/system.env
@@ -185,7 +185,7 @@ if [[ -f "$INSTALL_DIR/autorun.s3url" ]]
 then
     ## read in first line.  first line always assumed to be training location regardless what else is in file
     TRAINING_LOC=$(awk 'NR==1 {print; exit}' $INSTALL_DIR/autorun.s3url)
-    
+
     #get bucket name
     TRAINING_BUCKET=${TRAINING_LOC%%/*}
     #get prefix. minor exception handling in case there is no prefix and a root bucket is passed
@@ -195,16 +195,15 @@ then
     else
       TRAINING_PREFIX=""
     fi
-          
+
     ##check if custom autorun script exists in s3 training bucket.  If not, use default in this repo
     aws s3api head-object --bucket $TRAINING_BUCKET --key $TRAINING_PREFIX/autorun.sh || not_exist=true
     if [ $not_exist ]; then
-        echo "custom file does not exist, using local copy"      
+        echo "custom file does not exist, using local copy"
     else
         echo "custom script does exist, use it"
-        aws s3 cp s3://$TRAINING_LOC/autorun.sh $INSTALL_DIR/bin/autorun.sh   
+        aws s3 cp s3://$TRAINING_LOC/autorun.sh $INSTALL_DIR/bin/autorun.sh
     fi
     chmod +x $INSTALL_DIR/bin/autorun.sh
     bash -c "source $INSTALL_DIR/bin/autorun.sh"
 fi
-

@@ -5,7 +5,6 @@ verlte() {
 }
 
 function dr-update-env {
-
   if [[ -f "$DIR/system.env" ]]
   then
     LINES=$(grep -v '^#' $DIR/system.env)
@@ -46,7 +45,6 @@ function dr-update-env {
     export DR_ROBOMAKER_EVAL_PORT="8080-8100"
     export DR_ROBOMAKER_GUI_PORT="5901-5920"
   fi
-
 }
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
@@ -146,7 +144,7 @@ then
     DR_EVAL_COMPOSE_FILE="$DR_EVAL_COMPOSE_FILE $DR_DOCKER_FILE_SEP $DIR/docker/docker-compose-keys.yml"
     export DR_UPLOAD_PROFILE="--profile $DR_UPLOAD_S3_PROFILE"
     export DR_LOCAL_S3_AUTH_MODE="profile"
-else 
+else
     export DR_LOCAL_S3_AUTH_MODE="role"
 fi
 
@@ -165,7 +163,6 @@ if [[ -n "${DR_MINIO_COMPOSE_FILE}" ]]; then
     else
         docker-compose $DR_MINIO_COMPOSE_FILE -p s3 --log-level ERROR up -d
     fi
-
 fi
 
 ## Version check

@@ -3,8 +3,8 @@
 trap ctrl_c INT
 
 function ctrl_c() {
-        echo "Requested to stop."
-        exit 1
+    echo "Requested to stop."
+    exit 1
 }
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
@@ -12,7 +12,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 ## Patch system
 sudo apt-get update && sudo apt-mark hold grub-pc && sudo DEBIAN_FRONTEND=noninteractive apt-get -y -o \
                         DPkg::options::="--force-confdef" -o DPkg::options::="--force-confold" -qq --force-yes upgrade && \
-                        sudo apt-get install --no-install-recommends -y jq 
+                        sudo apt-get install --no-install-recommends -y jq
 source $DIR/detect.sh
 echo "Detected cloud type ${CLOUD_NAME}"
 
@@ -51,7 +51,6 @@ then
     elif  [ -n "$ADDL_DISK" ] && [ -n "$ADDL_PART" ];
     then
         echo "Found $ADDL_DISK - $ADDL_PART already mounted. Installing into present drive/directory structure."
-
     else
         echo "Did not find $ADDL_DISK. Installing into present drive/directory structure."
     fi

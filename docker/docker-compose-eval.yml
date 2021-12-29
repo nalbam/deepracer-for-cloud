@@ -8,10 +8,15 @@ networks:
 services:
   rl_coach:
     image: awsdeepracercommunity/deepracer-rlcoach:${DR_COACH_IMAGE}
-    command: ["/bin/bash", "-c", "echo No work for coach in Evaluation Mode"]
+    command:
+      [
+        "/bin/bash",
+        "-c",
+        "echo No work for coach in Evaluation Mode"
+      ]
   robomaker:
     image: awsdeepracercommunity/deepracer-robomaker:${DR_ROBOMAKER_IMAGE}
-    command: ["${ROBOMAKER_COMMAND}"]
+    command: [ "${ROBOMAKER_COMMAND}" ]
     ports:
       - "${DR_ROBOMAKER_EVAL_PORT}:8080"
     environment:
@@ -20,7 +25,7 @@ services:
       - WORLD_NAME=${DR_WORLD_NAME}
       - NUMBER_OF_TRIALS=${DR_NUMBER_OF_EPISODES}
       - MODEL_S3_PREFIX=${DR_LOCAL_S3_MODEL_PREFIX}
-      - MODEL_S3_BUCKET=${DR_LOCAL_S3_BUCKET}      
+      - MODEL_S3_BUCKET=${DR_LOCAL_S3_BUCKET}
       - APP_REGION=${DR_AWS_APP_REGION}
       - S3_YAML_NAME=${DR_CURRENT_PARAMS_FILE}
       - KINESIS_VIDEO_STREAM_NAME=${DR_KINESIS_STREAM_NAME}

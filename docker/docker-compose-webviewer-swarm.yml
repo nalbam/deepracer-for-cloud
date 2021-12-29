@@ -12,4 +12,4 @@ services:
         condition: none
       replicas: 1
       placement:
-        constraints: [node.labels.Sagemaker == true ]
+        constraints: [ node.labels.Sagemaker == true ]
